@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+      <title>HomePage</title>
+      <link rel ="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    </head>
+    <body>
+      <h1 class="multicolor"> {{ message }}</h1>
+      <a href="{{ url_for('suite') }}"> Cliquer sur ce lien pour aller à la page suivante </a>
+      <h1>Veuillez entrer votre nom</h1>
+        <form action="." method="POST">
+            <input type="text" name="username">
+            <button type="submit">OK</button>
+        </form>
+        <a href="{{ url_for('formulaire_complet') }}"> Cliquer sur ce lien pour aller au formulaire plus complet </a>
+    </body>
+</html>

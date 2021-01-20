@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+      <title>HomePage</title>
+      <link rel ="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    </head>
+    <body>
+      <h1>Veuillez entrer vos nom, prénom, sexe (M, Mme) et pseudo</h1>
+        <form action={{url_for('formulaire_sent')}} method="POST">
+            <input type="text" name="nom">
+            <input type="text" name="prenom">
+            <input type="text" name="sexe">
+            <input type="text" name="pseudo">
+            <button type="submit">OK</button>
+        </form>
+    </body>
+</html>
