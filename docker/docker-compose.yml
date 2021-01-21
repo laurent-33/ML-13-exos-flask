@@ -1,9 +1,25 @@
 version: "3.0"
 services:
-  exos-flask:
+  app:
     build:
       context: .
-    container_name: exos-flask
+    image: jupyter-image-custom2
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+    ports:
+      - 5000:5000
+    volumes:
+      - ../:/usr/src/exos-flask
+    networks:
+      - database_net
+    command: sh -c "
+      cd ../../usr/src/exos-flask
+      && python script.py"
+
+  jupyter:
     image: jupyter-image-custom2
     restart: unless-stopped
     logging:
@@ -13,9 +29,39 @@ services:
     ports:
       - 8888:8888
       - 6006:6006
-      - 5000:5000
     volumes:
       - ../:/usr/src/exos-flask
+    networks:
+      - database_net
     command: sh -c "
       cd ../../usr/src/exos-flask
       && jupyter notebook --ip='0.0.0.0' --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''"
+  
+  database:
+    image: mysql:latest
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=
+      - MYSQL_DATABASE=flask
+    networks:
+      - database_net
+    volumes: 
+      - database_data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    command:
+      --default_authentication_plugin=mysql_native_password
+  
+  adminer:
+    image: dehy/adminer:latest
+    networks:
+      - database_net
+    ports:
+      - 8080:80
+
+networks:
+  database_net:
+    driver: bridge
+
+volumes:
+  database_data:
