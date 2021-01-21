@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request
-app = Flask(__name__)
-
+from flask import Flask, render_template, request, flash, redirect, url_for
 import logging
 import mysql.connector
 import os
 import cgi
+
+app = Flask(__name__)
 
 @app.route("/")
 def hello():
@@ -42,13 +42,13 @@ def formulaire_sent():
         user='user', password='exo'
     )
     cursor = cnx.cursor()
-
     query = ("INSERT INTO `utilisateurs` (nom, prenom, sexe, pseudo) VALUES (%s, %s, %s, %s)")
     
     try:
         cursor.execute(query, (nom, prenom, sexe, pseudo))
     except mysql.connector.errors.IntegrityError:
-        logging.warning('ce pseudo est déjà utilisé')
+        flash('ce pseudo est déjà utilisé')
+        return redirect(url_for('formulaire_complet'))
     
     cursor.close()
     cnx.commit()
@@ -81,4 +81,5 @@ def formulaire_sent():
         )
 
 if __name__ == "__main__":
-   app.run(debug=True, host='0.0.0.0')
+    app.secret_key = 'test_key'
+    app.run(debug=True, host='0.0.0.0')
